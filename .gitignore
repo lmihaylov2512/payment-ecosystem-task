@@ -1,0 +1,26 @@
+# OS / editors
+.DS_Store
+.idea/
+.vscode/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Symfony / PHP
+/vendor/
+/var/
+/public/bundles/
+
+# Go
+/bin/
+*.test
+coverage.out
+
+# Docker
+docker-compose.override.yml
+
+# Logs
+*.log
+
