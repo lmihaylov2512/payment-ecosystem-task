@@ -63,7 +63,6 @@ POST /api/v1/payments/{transactionId}/confirm
 make test                # all services
 make test-gateway        # payment-gateway
 make test-notification   # notification-manager
-make test-fraud          # fraud-engine
 ```
 
 ## Architectural Decisions
