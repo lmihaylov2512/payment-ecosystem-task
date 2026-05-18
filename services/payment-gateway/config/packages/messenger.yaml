@@ -1,0 +1,44 @@
+framework:
+    messenger:
+        transports:
+            payment_initiated:
+                dsn: '%env(RABBITMQ_URL)%'
+                serializer: App\Serializer\PaymentMessageSerializer
+                options:
+                    exchange:
+                        name: payment.events
+                        type: topic
+                        default_publish_routing_key: payment.initiated
+
+            payment_notification:
+                dsn: '%env(RABBITMQ_URL)%'
+                serializer: App\Serializer\PaymentNotificationSerializer
+                options:
+                    exchange:
+                        name: payment.events
+                        type: topic
+                        default_publish_routing_key: payment.notification
+
+            payment_processed:
+                dsn: '%env(RABBITMQ_URL)%'
+                serializer: App\Serializer\PaymentMessageSerializer
+                options:
+                    exchange:
+                        name: payment.events
+                        type: topic
+                    queues:
+                        payment-gateway.payment-processed:
+                            binding_keys:
+                                - payment.processed
+
+        routing:
+            'App\Message\InitiatePaymentMessage': payment_initiated
+            'App\Message\PaymentNotificationMessage': payment_notification
+
+when@test:
+    framework:
+        messenger:
+            transports:
+                payment_initiated: 'in-memory://'
+                payment_processed: 'in-memory://'
+                payment_notification: 'in-memory://'
