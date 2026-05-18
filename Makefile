@@ -1,3 +1,11 @@
+install: install-gateway install-notification
+
+install-gateway:
+	docker compose run --rm --no-deps payment-gateway composer install
+
+install-notification:
+	docker compose run --rm --no-deps notification-manager composer install
+
 up:
 	docker compose up -d
 
@@ -17,7 +25,7 @@ logs-gateway:
 	docker compose logs -f payment-gateway
 
 logs-worker:
-	docker compose logs -f payment-gateway-worker
+	docker compose logs -f payment-gateway-consumer
 
 logs-notification:
 	docker compose logs -f notification-manager

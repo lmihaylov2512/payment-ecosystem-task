@@ -21,10 +21,13 @@ cp .env.example .env
 Start everything:
 
 ```bash
-make build
-make up
-make migrate
+make build            # build all Docker images from scratch
+make install          # composer install for all PHP services (no running containers needed)
+make up               # start all containers in detached mode
+make migrate          # run Doctrine migrations (payment-gateway)
 ```
+
+`make install` installs PHP vendor dependencies for both Symfony services via `docker compose run --no-deps`, so no RabbitMQ or MySQL is required at this stage.
 
 - API: `http://localhost:8080`
 - RabbitMQ UI: `http://localhost:15672` (guest / guest)
