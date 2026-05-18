@@ -4,9 +4,9 @@
 .vscode/
 
 # Environment
-.env
-.env.local
-.env.*.local
+/.env
+/.env.local
+/.env.*.local
 
 # Symfony / PHP
 /vendor/
@@ -15,11 +15,11 @@
 
 # Go
 /bin/
-*.test
+/*.test
 coverage.out
 
 # Docker
-docker-compose.override.yml
+/docker-compose.override.yml
 
 # Logs
 *.log
