@@ -71,6 +71,7 @@ services:
       APP_ENV: dev
       RABBITMQ_URL: amqp://${RABBITMQ_USER}:${RABBITMQ_PASS}@rabbitmq:5672/
       DATABASE_URL: mysql://${MYSQL_USER}:${MYSQL_PASSWORD}@mysql:3306/${MYSQL_DATABASE}
+      ADMIN_EMAIL: ${ADMIN_EMAIL}
     volumes:
       - ./services/payment-gateway/:/app/
     depends_on:
@@ -110,6 +111,7 @@ services:
       APP_ENV: dev
       RABBITMQ_URL: amqp://${RABBITMQ_USER}:${RABBITMQ_PASS}@rabbitmq:5672/
       DATABASE_URL: mysql://${MYSQL_USER}:${MYSQL_PASSWORD}@mysql:3306/${MYSQL_DATABASE}
+      ADMIN_EMAIL: ${ADMIN_EMAIL}
     volumes:
       - ./services/payment-gateway/:/app/
     depends_on:
