@@ -15,7 +15,7 @@
 
 # Go
 /bin/
-*.test
+/*.test
 coverage.out
 
 # Docker
