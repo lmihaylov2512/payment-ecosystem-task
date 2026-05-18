@@ -34,18 +34,19 @@ Only Payment Gateway uses MySQL.
 
 The `transactions` table stores:
 
-- internal `id`
-- public `transaction_id`
-- `user_id`
-- `customer_email`
-- `amount`
-- `currency`
-- `payment_method`
-- `status`
-- `idempotency_key`
-- `request_hash`
-- `correlation_id`
-- timestamps
+- `id` - unsinged integer, internal ID
+- `transaction_id` - UUID v7, unique transaction identifier
+- `user_id` - UUID, the corresponding user identifier
+- `user_email` - string, the customer e-mail address
+- `amount` - decimal, transaction amount
+- `currency` - string, transaction currency
+- `payment_method` - string, transaction payment method, e.g. card, bank_transfer, cash, etc.
+- `status` - enum(pending, accepted, rejected, flagged)
+- `request_id` - string, unique request identifier, idempotency creation
+- `correlation_id` - UUID v7, messaging correlation identifier
+- `created_at` - current timestamp
+- `updated_at` - nullable timestamp, when transaction is updated
+- `accepted_at` - nullable timestamp, when transaction is approved
 
 Do not add a shared database between services.
 

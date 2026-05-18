@@ -20,17 +20,12 @@ func NewPaymentHandler(pub *publisher.Publisher) *PaymentHandler {
 func (h *PaymentHandler) Handle(ctx context.Context, msg consumer.PaymentInitiated) error {
 	result := fraud.Check(msg.Amount, msg.Currency, msg.PaymentMethod)
 
-	status := "approved"
-	if !result.Approved {
-		status = "rejected"
-	}
-
-	log.Printf("handler: transaction %s -> %s flags=%v reason=%q", msg.TransactionID, status, result.Flags, result.Reason)
+	log.Printf("handler: transaction %s high_risk=%v flags=%v", msg.TransactionID, !result.Approved, result.Flags)
 
 	return h.pub.Publish(ctx, publisher.PaymentProcessed{
 		TransactionID: msg.TransactionID,
 		CorrelationID: msg.CorrelationID,
-		Status:        status,
-		Reason:        result.Reason,
+		Amount:        msg.Amount,
+		HighRisk:      !result.Approved,
 	})
 }

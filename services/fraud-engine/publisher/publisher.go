@@ -14,10 +14,10 @@ const (
 )
 
 type PaymentProcessed struct {
-	TransactionID string `json:"transaction_id"`
-	CorrelationID string `json:"correlation_id"`
-	Status        string `json:"status"`
-	Reason        string `json:"reason"`
+	TransactionID string  `json:"transaction_id"`
+	CorrelationID string  `json:"correlation_id"`
+	Amount        float64 `json:"amount"`
+	HighRisk      bool    `json:"high_risk"`
 }
 
 type Publisher struct {
