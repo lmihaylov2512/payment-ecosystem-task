@@ -8,7 +8,7 @@ use App\Attribute\MapRequestHeader;
 use App\Dto\CreateTransactionDto;
 use App\Exception\DuplicateTransactionException;
 use App\Exception\TransactionNotFoundException;
-use App\Service\{PaymentService, NotificationService};
+use App\Service\{Notification\NotificationService, PaymentService};
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -28,7 +28,7 @@ class PaymentController extends AbstractController
         try {
             $transaction = $this->paymentService->confirmTransaction($transactionId);
 
-            $this->notificationService->dispatchPaymentNotification($transaction);
+            $this->notificationService->dispatchPaymentNotification($transaction, $transaction->getUserEmail());
 
             return $this->json([
                 'transaction_id' => $transaction->getTransactionId(),

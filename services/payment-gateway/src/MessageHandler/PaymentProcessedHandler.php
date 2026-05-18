@@ -6,17 +6,21 @@ namespace App\MessageHandler;
 
 use App\Enum\TransactionStatus;
 use App\Message\PaymentProcessedMessage;
+use App\Service\Notification\RecipientManager;
 use App\Repository\TransactionRepository;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Service\Notification\NotificationService;
 use DateTimeImmutable;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
-class PaymentProcessedHandler
+readonly class PaymentProcessedHandler
 {
     public function __construct(
-        private readonly TransactionRepository $repository,
-        private readonly EntityManagerInterface $entityManager,
+        private TransactionRepository  $repository,
+        private EntityManagerInterface $entityManager,
+        private NotificationService    $notificationService,
+        private RecipientManager       $recipientManager,
     ) {}
 
     public function __invoke(PaymentProcessedMessage $message): void
@@ -35,5 +39,8 @@ class PaymentProcessedHandler
         }
 
         $this->entityManager->flush();
+
+        $recipient = $this->recipientManager->resolve($message->highRisk);
+        $this->notificationService->dispatchPaymentNotification($transaction, $recipient->resolveEmail($transaction));
     }
 }

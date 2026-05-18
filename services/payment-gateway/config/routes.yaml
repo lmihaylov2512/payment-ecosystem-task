@@ -15,7 +15,7 @@ api_controllers:
         path: ../src/Controller/Api/
         namespace: App\Controller\Api
     type: attribute
-    prefix: /api
+    prefix: /api/v1
     defaults:
         _format: json
     stateless: true

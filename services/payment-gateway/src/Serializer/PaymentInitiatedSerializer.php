@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Serializer;
 
-use App\Message\{InitiatePaymentMessage, PaymentProcessedMessage};
-use Symfony\Component\Messenger\Transport\Serialization\SerializerInterface;
+use App\Message\InitiatePaymentMessage;
 use Symfony\Component\Messenger\Envelope;
+use Symfony\Component\Messenger\Transport\Serialization\SerializerInterface;
 
-class PaymentMessageSerializer implements SerializerInterface
+class PaymentInitiatedSerializer implements SerializerInterface
 {
     public function encode(Envelope $envelope): array
     {
@@ -19,7 +19,7 @@ class PaymentMessageSerializer implements SerializerInterface
             'body' => json_encode([
                 'transaction_id' => $message->transactionId,
                 'correlation_id' => $message->correlationId,
-                'amount' => (float) $message->amount,
+                'amount' => $message->amount,
                 'currency' => $message->currency,
             ]),
             'headers' => ['Content-Type' => 'application/json'],
@@ -28,13 +28,6 @@ class PaymentMessageSerializer implements SerializerInterface
 
     public function decode(array $encodedEnvelope): Envelope
     {
-        $data = json_decode($encodedEnvelope['body'], true);
-
-        return new Envelope(new PaymentProcessedMessage(
-            transactionId: $data['transaction_id'],
-            correlationId: $data['correlation_id'],
-            amount: (float) $data['amount'],
-            highRisk: (bool) $data['high_risk'],
-        ));
+        throw new \LogicException('payment_initiated transport is publish-only.');
     }
 }

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Service;
+namespace App\Service\Notification;
 
 use App\Entity\Transaction;
 use App\Message\{InitiatePaymentMessage, PaymentNotificationMessage};
@@ -24,14 +24,14 @@ readonly class NotificationService
         ));
     }
 
-    public function dispatchPaymentNotification(Transaction $transaction): void
+    public function dispatchPaymentNotification(Transaction $transaction, string $recipientEmail): void
     {
         $this->bus->dispatch(new PaymentNotificationMessage(
             transactionId: $transaction->getTransactionId()->toString(),
             correlationId: $transaction->getCorrelationId()->toString(),
-            userEmail: $transaction->getUserEmail(),
             amount: $transaction->getAmount(),
             status: $transaction->getStatus()->value,
+            recipientEmail: $recipientEmail,
         ));
     }
 }

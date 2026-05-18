@@ -29,7 +29,7 @@ RUN apk add --no-cache \
     && docker-php-ext-enable amqp \
     && apk del .build-deps
 
-CMD ["php", "bin/console", "messenger:consume", "async", "--time-limit=3600", "-vv"]
+CMD ["php", "bin/console", "messenger:consume", "payment_notification", "--time-limit=3600", "-vv"]
 
 FROM base AS dev
 RUN apk add --no-cache git unzip
