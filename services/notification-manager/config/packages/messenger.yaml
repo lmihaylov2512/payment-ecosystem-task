@@ -1,0 +1,25 @@
+framework:
+    messenger:
+        transports:
+            payment_notification:
+                dsn: '%env(RABBITMQ_URL)%'
+                serializer: App\Serializer\NotificationMessageSerializer
+                options:
+                    exchange:
+                        name: payment.events
+                        type: topic
+                    queues:
+                        notification-manager.payment-notification:
+                            binding_keys:
+                                - payment.notification
+                retry_strategy:
+                    max_retries: 5
+                    delay: 1000
+                    multiplier: 2
+                    max_delay: 32000
+
+when@test:
+    framework:
+        messenger:
+            transports:
+                payment_notification: 'in-memory://'
