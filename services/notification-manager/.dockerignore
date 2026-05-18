@@ -1,0 +1,9 @@
+.git
+.env
+.env.*
+var/cache
+var/log
+vendor
+tests
+*.md
+.dockerignore
