@@ -61,25 +61,6 @@ services:
       rabbitmq:
         condition: service_healthy
 
-  payment-gateway:
-    build:
-      context: ./services/payment-gateway
-      dockerfile: Dockerfile
-      target: dev
-    container_name: payment-gateway
-    environment:
-      APP_ENV: dev
-      RABBITMQ_URL: amqp://${RABBITMQ_USER}:${RABBITMQ_PASS}@rabbitmq:5672/
-      DATABASE_URL: mysql://${MYSQL_USER}:${MYSQL_PASSWORD}@mysql:3306/${MYSQL_DATABASE}
-      ADMIN_EMAIL: ${ADMIN_EMAIL}
-    volumes:
-      - ./services/payment-gateway/:/app/
-    depends_on:
-      rabbitmq:
-        condition: service_healthy
-      mysql:
-        condition: service_healthy
-
   notification-manager:
     build:
       context: ./services/notification-manager
@@ -99,12 +80,31 @@ services:
       mailpit:
         condition: service_started
 
-  payment-gateway-worker:
+  payment-gateway:
     build:
       context: ./services/payment-gateway
       dockerfile: Dockerfile
       target: dev
-    container_name: payment-gateway-worker
+    container_name: payment-gateway
+    environment:
+      APP_ENV: dev
+      RABBITMQ_URL: amqp://${RABBITMQ_USER}:${RABBITMQ_PASS}@rabbitmq:5672/
+      DATABASE_URL: mysql://${MYSQL_USER}:${MYSQL_PASSWORD}@mysql:3306/${MYSQL_DATABASE}
+      ADMIN_EMAIL: ${ADMIN_EMAIL}
+    volumes:
+      - ./services/payment-gateway/:/app/
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      mysql:
+        condition: service_healthy
+
+  payment-gateway-consumer:
+    build:
+      context: ./services/payment-gateway
+      dockerfile: Dockerfile
+      target: dev
+    container_name: payment-gateway-consumer
     restart: unless-stopped
     command: php bin/console messenger:consume payment_processed --time-limit=3600 -vv
     environment:

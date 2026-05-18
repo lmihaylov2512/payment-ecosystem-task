@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Message;
 
-final class PaymentNotificationMessage
+final readonly class PaymentNotificationMessage
 {
     public function __construct(
-        public readonly string $transactionId,
-        public readonly string $correlationId,
-        public readonly string $userEmail,
-        public readonly float $amount,
-        public readonly string $status,
+        public string $transactionId,
+        public string $correlationId,
+        public float  $amount,
+        public string $status,
+        public string $recipientEmail,
     ) {}
 }

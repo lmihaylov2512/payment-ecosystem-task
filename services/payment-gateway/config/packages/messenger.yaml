@@ -3,7 +3,7 @@ framework:
         transports:
             payment_initiated:
                 dsn: '%env(RABBITMQ_URL)%'
-                serializer: App\Serializer\PaymentMessageSerializer
+                serializer: App\Serializer\PaymentInitiatedSerializer
                 options:
                     exchange:
                         name: payment.events
@@ -21,7 +21,7 @@ framework:
 
             payment_processed:
                 dsn: '%env(RABBITMQ_URL)%'
-                serializer: App\Serializer\PaymentMessageSerializer
+                serializer: App\Serializer\PaymentProcessedSerializer
                 options:
                     exchange:
                         name: payment.events
@@ -30,6 +30,11 @@ framework:
                         payment-gateway.payment-processed:
                             binding_keys:
                                 - payment.processed
+                retry_strategy:
+                    max_retries: 5
+                    delay: 1000
+                    multiplier: 2
+                    max_delay: 32000
 
         routing:
             'App\Message\InitiatePaymentMessage': payment_initiated

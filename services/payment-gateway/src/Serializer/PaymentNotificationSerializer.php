@@ -25,9 +25,9 @@ class PaymentNotificationSerializer implements SerializerInterface
             'body' => json_encode([
                 'transaction_id' => $message->transactionId,
                 'correlation_id' => $message->correlationId,
-                'user_email' => $message->userEmail,
                 'amount' => $message->amount,
                 'status' => $message->status,
+                'recipient_email' => $message->recipientEmail,
             ]),
             'headers' => ['Content-Type' => 'application/json'],
         ];
