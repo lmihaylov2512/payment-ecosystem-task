@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"time"
 
 	amqp "github.com/rabbitmq/amqp091-go"
 )
@@ -13,6 +14,10 @@ const (
 	exchange   = "payment.events"
 	queue      = "fraud-engine.payment-initiated"
 	routingKey = "payment.initiated"
+
+	maxRetries   = 5
+	initialDelay = time.Second
+	maxDelay     = 32 * time.Second
 )
 
 type PaymentInitiated struct {
@@ -72,14 +77,35 @@ func (c *Consumer) Start(ctx context.Context) error {
 			if !ok {
 				return fmt.Errorf("consumer: channel closed")
 			}
-			if err := c.process(ctx, msg); err != nil {
-				log.Printf("consumer: process error: %v", err)
-				msg.Nack(false, true)
+			if err := c.processWithRetry(ctx, msg); err != nil {
+				log.Printf("consumer: exhausted retries, discarding message: %v", err)
+				msg.Nack(false, false)
 				continue
 			}
 			msg.Ack(false)
 		}
 	}
+}
+
+func (c *Consumer) processWithRetry(ctx context.Context, msg amqp.Delivery) error {
+	delay := initialDelay
+	for attempt := range maxRetries {
+		err := c.process(ctx, msg)
+		if err == nil {
+			return nil
+		}
+		if attempt == maxRetries-1 {
+			return fmt.Errorf("attempt %d: %w", attempt+1, err)
+		}
+		log.Printf("consumer: attempt %d/%d failed, retrying in %s: %v", attempt+1, maxRetries, delay, err)
+		select {
+		case <-ctx.Done():
+			return ctx.Err()
+		case <-time.After(delay):
+		}
+		delay = min(delay*2, maxDelay)
+	}
+	return nil
 }
 
 func (c *Consumer) process(ctx context.Context, msg amqp.Delivery) error {
